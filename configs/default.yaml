@@ -1,0 +1,14 @@
+bot:
+  debug: true
+  username: hue_1338_bot
+  token:
+handlers:
+  - name: hue
+    properties:
+      min: 6
+      max: 10
+handle_policy: 0
+update_config:
+  timeout: 10
+log:
+  level: DEBUG
