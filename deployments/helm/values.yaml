@@ -1,0 +1,71 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/carlosray/telegramxbot-go/xbot
+  pullPolicy: IfNotPresent
+imagePullSecrets: [ ]
+
+podAnnotations: { }
+podSecurityContext: { }
+securityContext: { }
+
+service:
+  type: ClusterIP
+  port: 80
+
+env:
+  - name: APPLICATION_CONFIG
+    value: /etc/config/app.yaml
+
+config:
+  mountPath: /etc/config
+  value:
+    bot:
+      debug: false
+      username: hue_1338_bot
+      token: <FILL>
+    handlers:
+      - name: hue
+        properties:
+          min: 6
+          max: 10
+    handle_policy: 0
+    update_config:
+      timeout: 10
+    log:
+      level: DEBUG
+
+
+secret:
+  mountPath: /etc/secret
+  value:
+    example: test
+
+resources:
+  limits:
+    cpu: 300m
+    memory: 512Mi
+  requests:
+    cpu: 150m
+    memory: 256Mi
+
+probe: {}
+#  readiness:
+#    path: /actuator/health/readiness
+#    failureThreshold: 3
+#    periodSeconds: 10
+#    successThreshold: 1
+#  liveness:
+#    path: /actuator/health/liveness
+#    failureThreshold: 3
+#    periodSeconds: 10
+#    successThreshold: 1
+#  startup:
+#    path: /actuator/health/liveness
+#    failureThreshold: 30
+#    periodSeconds: 10
+#    successThreshold: 1
+
+nodeSelector: { }
+tolerations: [ ]
+affinity: { }
