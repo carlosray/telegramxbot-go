@@ -1,0 +1,46 @@
+name: Xbot CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'master'
+      - 'dev/*'
+
+env:
+  IMAGE: docker.pkg.github.com/${{ github.repository }}/xbot:${{ github.sha }}
+
+jobs:
+  build-and-push-docker-image:
+    name: build-and-push-docker-image
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/dev')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.5.0
+      - name: Build and publish Docker image
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          docker build --tag ${IMAGE} -f build/Dockerfile .
+          docker login docker.pkg.github.com -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
+          docker push ${IMAGE}
+          
+  change-helm-app-version:
+    needs: build-and-push-docker-image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.5.0
+      
+      - name: Commit new helm appVersion
+        env:
+          APP_VERSION: ${{ github.sha }}
+        run: |
+          cd deployments/helm
+          sed -i "/^\([[:space:]]*appVersion: \).*/s//\1\"${APP_VERSION}\"/" Chart.yaml
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git commit -a -m "Changed helm app version"
+          git pull --rebase
+          git push
