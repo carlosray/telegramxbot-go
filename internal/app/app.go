@@ -19,7 +19,7 @@ func Run() {
 	bot, err := tgbotapi.NewBotAPI(cfg.Bot.Token)
 	if err != nil {
 		log.Errorf("Error creating bot", err)
-		panic("error creating bot")
+		panic(err)
 	}
 
 	bot.Debug = cfg.Bot.Debug
