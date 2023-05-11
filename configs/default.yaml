@@ -7,6 +7,10 @@ handlers:
     properties:
       min: 6
       max: 10
+  - name: status
+    properties:
+      command: status
+      environment: local
 handle_policy: 0
 update_config:
   timeout: 10

@@ -2,14 +2,12 @@ package handler
 
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/op/go-logging"
 	"math/rand"
 	"regexp"
 	"strings"
+	"telegramxbot/internal/util"
 	"time"
 )
-
-var log = logging.MustGetLogger("xbot")
 
 type HueHandler struct {
 	minMessages int
@@ -42,11 +40,12 @@ func (h *HueHandler) Setup(props map[string]interface{}) {
 
 func (h *HueHandler) Handle(bot *tgbotapi.BotAPI, update *tgbotapi.Update) (bool, error) {
 	var msg *tgbotapi.Message
-	if msg = update.Message; msg == nil || msg.Chat == nil || !h.needReply(msg.Chat.ID) {
+	var ok bool
+	if msg, ok = util.GetNonCommandMessage(update); !ok || !h.needReply(msg.Chat.ID) {
 		return false, nil
 	}
 
-	log.Infof("Processing hue from chat %#v", msg.Chat)
+	log.Infof("Processing 'hue' from chat %d", msg.Chat.ID)
 
 	message := getHueMessage(msg.Text)
 
