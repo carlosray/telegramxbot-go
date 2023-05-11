@@ -3,4 +3,4 @@ name: xbot
 description: A Helm chart for Xbot
 type: application
 version: 1.0.0
-appVersion: "ac1f326b3edb1266b8910f6055929d9f8d2f20d0"
+appVersion: "e5a72dc42bb61596f9e41e173c7a052651813184"
